@@ -4,7 +4,7 @@ const fs = require('fs/promises')
 // Return games possible with:
 // 12 red cubes, 13 green cubes and 14 blue cubes
 
-const main = async (values) => {
+const main = async (values = {}) => {
     let content = await fs.readFile('./input.txt',{encoding:'utf-8'})
     content = content.split('\r\n')
     let obj = {}
@@ -39,7 +39,7 @@ const main = async (values) => {
                 }   
             }
             // Se marca el game si tiene mas pelotas de algun color como imposible (null)
-            if(values.blue < colors[j].blue || values.green < colors[j].green || values.red < colors[j].red){
+            if(values != {} && (values.blue < colors[j].blue || values.green < colors[j].green || values.red < colors[j].red)){
                 obj[game.split(' ')[1]] = null;
             }
         }
