@@ -54,9 +54,8 @@ const main = async (values = {}) => {
         
     }
     // Get each key of the object (games' number) and get their sum
-    return Object.keys(obj).reduce((p,c)=> parseInt(p) + parseInt(c));
+    console.log( Object.keys(obj).reduce((p,c)=> parseInt(p) + parseInt(c)));
 }
-let result = main({blue: 14, green: 13, red: 12})
-console.log(result)
+main({blue: 14, green: 13, red: 12})
 
 
