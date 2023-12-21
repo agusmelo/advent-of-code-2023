@@ -61,7 +61,7 @@ const main = async (values = {}, part= 1) => {
         
     }
     if(part == 1){
-        // Get each key of the object (games' number) and get their sum
+        // Suma de las keys del objeto
         console.log( Object.keys(obj).reduce((p,c)=> parseInt(p) + parseInt(c)) );
     }
     else if(part == 2){
