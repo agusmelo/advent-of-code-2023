@@ -59,5 +59,5 @@ function isSymbol(char){
 
 function charIsNumber(char){
     let asciiCode = char.charCodeAt(0);
-    return asciiCode >= 0x31 && asciiCode <= 0x39;
+    return asciiCode >= 0x30 && asciiCode <= 0x39;
 }
