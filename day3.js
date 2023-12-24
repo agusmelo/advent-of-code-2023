@@ -1,6 +1,6 @@
 const fs = require('fs/promises');
 
-const main = async () =>{
+const main = async (part=1) =>{
     const rawContent = await fs.readFile('./input.txt',{encoding: 'utf-8'});
     let rows = rawContent.split('\r\n');
     let matrix = [];
@@ -9,6 +9,10 @@ const main = async () =>{
     let numPointer;
     let currentNum = "";
     let history = [];
+
+    // Used in part 2
+    let partCount = 0;
+    let gearRatio, sumOfGearRatios = 0;
     
     for (let i = 0; i < rows.length; i++) {
         matrix[i] = rows[i].split('');  
@@ -17,7 +21,32 @@ const main = async () =>{
     for (let i = 0; i < rows.length; i++) {
         for (let j = 0; j < rows[i].length; j++) {
             char = matrix[i][j]
-            if(isSymbol(char)){
+            if((isSymbol(char) && part == 1)){
+                for (let k = -1; k <= 1; k++) {
+                    for (let l = -1; l <= 1; l++) {
+                        if((l != 0 || k!=0)  && i+k >= 0 && i+k < rows.length && j+l >= 0 && j+l < rows[i].length){
+                            currentNum = "";
+                            if(charIsNumber(matrix[i+k][j+l])){
+                                numPointer = [i+k,j+l];
+                                while(numPointer[1] >= 0 && matrix[numPointer[0]][numPointer[1]] !== '.' && !isSymbol(matrix[numPointer[0]][numPointer[1]])){
+                                    numPointer[1]--;
+                                }
+                                numPointer[1]++;
+                                while(numPointer[1] < rows[i].length && matrix[numPointer[0]][numPointer[1]] !== '.' && !isSymbol(matrix[numPointer[0]][numPointer[1]])){
+                                    currentNum += matrix[numPointer[0]][numPointer[1]];
+                                    matrix[numPointer[0]][numPointer[1]] = '.';
+                                    numPointer[1]++;
+                                }        
+                                history.push(currentNum);
+                                sum += parseInt(currentNum);
+                            }
+                        }
+                    } 
+                }
+            }
+            else if(part === 2 && (charIsGear(char))){
+                gearRatio = 1;
+                partCount = 0;
                 for (let k = -1; k <= 1; k++) {
                     for (let l = -1; l <= 1; l++) {
                         if((l != 0 || k!=0)  && i+k >= 0 && i+k < rows.length && j+l >= 0 && j+l < rows[i].length){
@@ -33,23 +62,34 @@ const main = async () =>{
                                     matrix[numPointer[0]][numPointer[1]] = '.';
                                     numPointer[1]++;
                                 }
-                                console.log(currentNum);
-                                history.push(currentNum);
-                                sum += parseInt(currentNum);
+                                // Part 2 logic
+                                partCount++;
+                                
+                                if( partCount > 2){
+                                    gearRatio = 0;
+                                }
+                                else{
+                                    gearRatio *= parseInt(currentNum);
+                                }
+                                
+                                console.log(partCount, currentNum, gearRatio, sumOfGearRatios)
                             }
                         }
                     } 
                 }
+                if( partCount === 2){
+                    sumOfGearRatios+=gearRatio;
+                }
             }
         }
     }
-
+    console.log('Sum of gear ratios: ', sumOfGearRatios)
     console.log(sum);
     console.log(history[0], history[history.length-1])
 
 }
 
-main()
+main(2)
 
 function isSymbol(char){
     // console.log('test: ', char)
@@ -60,4 +100,8 @@ function isSymbol(char){
 function charIsNumber(char){
     let asciiCode = char.charCodeAt(0);
     return asciiCode >= 0x30 && asciiCode <= 0x39;
+}
+
+function charIsGear(char){
+    return char.charCodeAt(0) == 0x2A;
 }
