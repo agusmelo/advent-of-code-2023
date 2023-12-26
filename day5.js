@@ -1,14 +1,5 @@
 const fs = require('fs/promises');
 
-class myMap {
-    constructor(name, map){
-        this.name = name;
-        this.map = map;
-    }
-
-}
-
-
 const main = async ()=>{
     let rawContent = await fs.readFile('./input.txt',{encoding:'utf-8'});
     let rows = rawContent.split('\r\n').filter( line => line.trim('') !== '');
