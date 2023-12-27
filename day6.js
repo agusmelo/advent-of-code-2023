@@ -8,13 +8,18 @@ const main = async (part = 1)=>{
     let rows = rawContent.split('\r\n').filter( line => line.trim('') !== '');
     let times = rows[0].split(':')[1].trim().split(/\s+/);
     let distances = rows[1].split(':')[1].trim().split(/\s+/);
+    console.log(times, distances)
 
     if(part === 2){
         times = [times.reduce((a,b)=> a+b)]
         distances = [distances.reduce((a,b)=> a+b)]
+        // let f = -x^2 + times[0]*x + -distances[0]
+        let first = Math.floor(( -times[0]+ Math.sqrt(times[0]**2 - 4*(distances[0])) )/(-2));
+        let last = Math.floor( ( -times[0]- Math.sqrt(times[0]**2 - 4*(distances[0])) )/(-2));
+        console.log(last-first);
+        return;
     }
 
-    console.log(times, distances)
     let vel, winningChance, acc;
     let myDistances = [];
     let currentDistance = [];
@@ -38,4 +43,4 @@ const main = async (part = 1)=>{
     console.log(acc)
 }
 
-main();
+main(2);
