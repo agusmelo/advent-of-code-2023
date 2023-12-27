@@ -94,7 +94,6 @@ const main = async ()=>{
     }
     
     console.log(sum)
-    // console.log(arr)
 
 
 }
