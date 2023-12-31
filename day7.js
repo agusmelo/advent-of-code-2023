@@ -10,20 +10,39 @@ const TYPES = {
     highCard: 7,
 }
 
-const CARD_ORDER = {'1':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'T':10,'J':11,'Q':12,'K':13,'A':14}
+const CARD_ORDER = {'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'T':10,'J':11,'Q':12,'K':13,'A':14}
 
-const main = async ()=>{
+const main = async (part = 1 )=>{
     let rawData = await fs.readFile('input.txt',{encoding:'utf-8'});
     let obj = {}
     let arr = rawData.split('\r\n').filter( line => line.trim('') !== '');
     arr =arr.map(elem => {
+        /* 
+            aux[0]: hand
+            aux[1]: bid
+            aux[2]: type
+        */
         let aux = elem.split(' ');
         let count = {}
         let hand = aux[0].split('');
+        let modifiedHand = hand;
+        let letterMaxOcurrNotJ;
         for (const card of hand) {
             count[card] = (count[card] || 0) + 1;
         }
-        let uniqueLabel = new Set(aux[0].split(''));
+        if(part === 2 && Object.keys(count).length > 1){
+            CARD_ORDER['J'] = 1;
+            let amountOfJs = count['J'] || 0;
+            delete count['J'];
+            for (const key in count) {
+                if(letterMaxOcurrNotJ === undefined || count[key] > count[letterMaxOcurrNotJ]){
+                    letterMaxOcurrNotJ = key;
+                }
+            }
+            modifiedHand = aux[0].replace(/J/g, letterMaxOcurrNotJ).split('');
+            count[letterMaxOcurrNotJ] += amountOfJs; 
+        };
+        let uniqueLabel = new Set(modifiedHand);
         switch (uniqueLabel.size) {
             case 1:
                 aux[2] = TYPES.fiveOfKind;
@@ -71,8 +90,8 @@ const main = async ()=>{
         else{
             let i = 0;
             while(i < 5){
-                console.log(`Comparing ${a.hand[i]} amd ${b.hand[i]}`)
-                console.log(CARD_ORDER[a.hand[i]] > CARD_ORDER[b.hand[i]]  ? a.hand[i] : b.hand[i] )
+                // console.log(`Comparing ${a.hand[i]} amd ${b.hand[i]}`)
+                // console.log(CARD_ORDER[a.hand[i]] > CARD_ORDER[b.hand[i]]  ? a.hand[i] : b.hand[i] )
                 if(CARD_ORDER[a.hand[i]] < CARD_ORDER[b.hand[i]]){
                     return 1;
                 }
@@ -94,7 +113,5 @@ const main = async ()=>{
     }
     
     console.log(sum)
-
-
 }
-main()
+main(1)
