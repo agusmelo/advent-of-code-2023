@@ -1,5 +1,15 @@
 const fs = require('fs/promises');
 
+const part = 2;
+
+const mcd = (a, b) => b === 0 ? a : mcd(b, a % b);
+
+const mcm =  (a, b) => {
+    if (b === 0) return 0;
+    return a * b / mcd(a, b);
+};
+
+
 
 const rawNodesToObject = (rawNodes)=>{
     let nodes = {};
@@ -24,19 +34,14 @@ const transverseMap = (startingNode, directions, nodes) => {
     while(!currentNodes.every( (value ) => value[value.length-1] === 'Z')){
         switch (directions[stepPointer % directions.length] ) {
             case 'R':
-                console.log('ANTES:  ', currentNodes);
                 currentNodes.forEach((elem, index, self)=>{
                     self[index] = nodes[elem].right;
                 })
-                console.log('DESPUES:  ', currentNodes)
-                break;
-        
+                break; 
             case 'L':
-                console.log('ANTES:  ', currentNodes)
                 currentNodes.forEach((elem, index, self)=>{
                     self[index] = nodes[elem].left;
                 })
-                console.log('DESPUES:  ', currentNodes)
                 break;
 
             default:
@@ -49,18 +54,29 @@ const transverseMap = (startingNode, directions, nodes) => {
     return stepPointer;
 }
 const main = async () =>{
+    console.time()
     const rawData = await fs.readFile('./input.txt', {encoding:'utf-8'});
     let directions, rawNodes;
     [directions, ...rawNodes] = rawData.split('\r\n').filter( line => line.trim('') !== '');
     let nodes = rawNodesToObject(rawNodes);
 
-    let startnigNodes = ['AAA']
-    if(true){
+    let startnigNodes;
+    if(part === 1){
+        startnigNodes = ['AAA'];
+        console.log(transverseMap(startnigNodes, directions, nodes));
+    }
+    else{
         startnigNodes = Object.keys(nodes).filter( (elem) => {
             return elem[elem.length-1] === 'A';
         })
+        let arrayOfSteps = [];
+        startnigNodes.forEach((elem)=>{
+            arrayOfSteps.push(transverseMap(elem, directions, nodes));
+        })
+        let minSteps = arrayOfSteps.reduce((prev,curr)=>{
+            return mcm(prev,curr);
+        })
+        console.log(minSteps);
     }
-    console.log(transverseMap(startnigNodes, directions, nodes));
-
 }
 main()
