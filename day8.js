@@ -30,26 +30,11 @@ const rawNodesToObject = (rawNodes)=>{
 
 const transverseMap = (startingNode, directions, nodes) => {
     let stepPointer = 0;
-    let currentNodes =  Array.isArray(startingNode) ? [...startingNode] : [startingNode];
-    while(!currentNodes.every( (value ) => value[value.length-1] === 'Z')){
-        switch (directions[stepPointer % directions.length] ) {
-            case 'R':
-                currentNodes.forEach((elem, index, self)=>{
-                    self[index] = nodes[elem].right;
-                })
-                break; 
-            case 'L':
-                currentNodes.forEach((elem, index, self)=>{
-                    self[index] = nodes[elem].left;
-                })
-                break;
-
-            default:
-                throw Error('Invalid direction');
-                break;
-        }
+    let currentNodes = startingNode;
+    while(currentNodes[2] !== 'Z'){
+        currentNodes = directions[stepPointer % directions.length]  === 'R' 
+                    ?  nodes[currentNodes].right : nodes[currentNodes].left
         stepPointer++;
-        // console.log(currentNodes)
     }
     return stepPointer;
 }
@@ -59,7 +44,6 @@ const main = async () =>{
     let directions, rawNodes;
     [directions, ...rawNodes] = rawData.split('\r\n').filter( line => line.trim('') !== '');
     let nodes = rawNodesToObject(rawNodes);
-
     let startnigNodes;
     if(part === 1){
         startnigNodes = ['AAA'];
